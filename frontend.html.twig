@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Book Store</title>
+</head>
+<body>
+<p>
+{% if book %}
+    Our last book: <a href="/book/{{ book.id }}">{{ book.title }} by {{ book.author}}</a>!
+{% else %}
+    We have tons of books, but we can't show them now.
+{% endif %}
+</p>
+<p>
+{% if review %}
+    The latest review was posted by {{ review.reviewer }} about {{ review.book }} on {{ review.date }}.
+{% else %}
+    We usually have some reviews to show you as well!
+{% endif %}
+</p>
+</body>
+</html>
