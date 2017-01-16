@@ -1,8 +1,10 @@
 <?php
 
+namespace Demo\Command;
+
 use Odesk\Phystrix\AbstractCommand;
 
-class LastReviewCommand extends AbstractCommand
+class LastBookCommand extends AbstractCommand
 {
     /**
      * @return mixed
@@ -10,7 +12,7 @@ class LastReviewCommand extends AbstractCommand
     protected function run()
     {
         $client = new \GuzzleHttp\Client();
-        $result = $client->request('GET', 'http://localhost:1337/review/last', ['timeout' => 0.1]);
+        $result = $client->request('GET', 'http://localhost:1337/book/last', ['timeout' => 0.1]);
         return \json_decode($result->getBody()->getContents(), true);
     }
     

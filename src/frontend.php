@@ -1,8 +1,6 @@
 <?php
 
-set_time_limit(0);
-
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Odesk\Phystrix\ArrayStateStorage;
 use Zend\Config\Config;
@@ -13,9 +11,8 @@ use CapMousse\ReactRestify\Http\Request;
 use CapMousse\ReactRestify\Http\Response;
 use CapMousse\ReactRestify\Runner;
 use CapMousse\ReactRestify\Server;
-
-require 'LastBookCommand.php';
-require 'LastReviewCommand.php';
+use Demo\Command\LastBookCommand;
+use Demo\Command\LastReviewCommand;
 
 $loader = new Twig_Loader_Filesystem('.');
 $twig = new Twig_Environment($loader);
