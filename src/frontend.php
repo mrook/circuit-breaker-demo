@@ -2,6 +2,8 @@
 
 require '../vendor/autoload.php';
 
+use Demo\Phystrix\RequestLog;
+use GuzzleHttp\Client;
 use Odesk\Phystrix\ArrayStateStorage;
 use Zend\Config\Config;
 use Odesk\Phystrix\CircuitBreakerFactory;
@@ -29,72 +31,15 @@ $phystrix = new CommandFactory(
 );
 $server = new Server("Book Frontend");
 
-function getExecutedCommandsAsString(array $executedCommands)
-{
-    $output = "";
-    $aggregatedCommandsExecuted = [];
-    $aggregatedCommandExecutionTime = [];
-    
-    /** @var \Odesk\Phystrix\AbstractCommand $executedCommand */
-    foreach ($executedCommands as $executedCommand) {
-        $display = $executedCommand->getCommandKey() . "[";
-        $events = $executedCommand->getExecutionEvents();
-        
-        if (count($events) > 0) {
-            foreach ($events as $event) {
-                $display .= "{$event}, ";
-            }
-            $display = substr($display, 0, strlen($display) - 2);
-        } else {
-            $display .= "Executed";
-        }
-        
-        $display .= "]";
-        
-        if (!isset($aggregatedCommandsExecuted[$display])) {
-            $aggregatedCommandsExecuted[$display] = 0; 
-        }
-        
-        $aggregatedCommandsExecuted[$display] = $aggregatedCommandsExecuted[$display] + 1;
-        
-        $executionTime = $executedCommand->getExecutionTimeInMilliseconds();
-        
-        if ($executionTime < 0) {
-            $executionTime = 0;
-        }
-        
-        if (isset($aggregatedCommandExecutionTime[$display]) && $executionTime > 0) {
-            $aggregatedCommandExecutionTime[$display] = $aggregatedCommandExecutionTime[$display] + $executionTime;
-        } else {
-            $aggregatedCommandExecutionTime[$display] = $executionTime;
-        }
-    }
-
-    foreach ($aggregatedCommandsExecuted as $display => $count) {
-        if (strlen($output) > 0) {
-            $output .= ", ";
-        }
-        
-        $output .= "{$display}";
-
-        $output .= "[" . $aggregatedCommandExecutionTime[$display] . "ms]";
-
-        if ($count > 1) {
-            $output .= "x{$count}";
-        }
-    }
-    
-    return $output;
-}
-
 $server->get('/', function (Request $request, Response $response, $next) use ($phystrix, $twig) {
-    $requestLog = new \Odesk\Phystrix\RequestLog();
+    $requestLog = new RequestLog();
+    $client = new Client();
     
-    $lastBookCommand = $phystrix->getCommand(LastBookCommand::class);
+    $lastBookCommand = $phystrix->getCommand(LastBookCommand::class, $client);
     $lastBookCommand->setRequestLog($requestLog);
     $book = $lastBookCommand->execute();
 
-    $lastReviewCommand = $phystrix->getCommand(LastReviewCommand::class);
+    $lastReviewCommand = $phystrix->getCommand(LastReviewCommand::class, $client);
     $lastReviewCommand->setRequestLog($requestLog);
     $review = $lastReviewCommand->execute();
     
@@ -103,7 +48,7 @@ $server->get('/', function (Request $request, Response $response, $next) use ($p
         ->write($twig->render("frontend.html.twig", ['book' => $book, 'review' => $review]));
     $next();
     
-    echo "Request => " . getExecutedCommandsAsString($requestLog->getExecutedCommands()) . "\n";
+    echo "Request => " . $requestLog->getExecutedCommandsAsString() . "\n";
 });
 
 $runner = new Runner($server);

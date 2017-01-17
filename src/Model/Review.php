@@ -2,6 +2,8 @@
 
 namespace Demo\Model;
 
+use Faker\Generator;
+
 /**
  * @SWG\Definition(type="object", @SWG\Xml(name="Review"))
  */
@@ -42,4 +44,14 @@ class Review
      * @var \DateTime
      */
     public $date;
+
+    public function fromGenerator(Generator $generator)
+    {
+        $this->id = $generator->uuid;
+        $this->reviewer = $generator->name;
+        $this->bookId = $generator->uuid;
+        $this->bookTitle = substr($generator->sentence(5), 0, -1);
+        $this->review = $generator->text;
+        $this->date = $generator->date();
+    }
 }

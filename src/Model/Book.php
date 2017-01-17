@@ -2,6 +2,8 @@
 
 namespace Demo\Model;
 
+use Faker\Generator;
+
 /**
  * @SWG\Definition(type="object", @SWG\Xml(name="Book"))
  */
@@ -42,4 +44,14 @@ class Book
      * @var string
      */
     public $isbn;
+
+    public function fromGenerator(Generator $generator)
+    {
+        $this->id = $generator->uuid;
+        $this->author = $generator->name;
+        $this->title = substr($generator->sentence(5), 0, -1);
+        $this->summary = $generator->text;
+        $this->price = $generator->randomNumber(2);
+        $this->isbn = $generator->ean13;
+    }
 }

@@ -51,12 +51,7 @@ $server->get('/book/last', function (Request $request, Response $response, $next
     usleep(rand(0, 200 * 1000));
 
     $book = new Book();
-    $book->id = $faker->uuid;
-    $book->author = $faker->name;
-    $book->title = substr($faker->sentence(5), 0, -1);
-    $book->summary = $faker->text;
-    $book->price = $faker->randomNumber(2);
-    $book->isbn = $faker->ean13;
+    $book->fromGenerator($faker);
 
     $response->writeJson($book);
     $next();
@@ -80,12 +75,7 @@ $server->get('/review/last', function (Request $request, Response $response, $ne
     usleep(rand(0, 200 * 1000));
 
     $review = new Review();
-    $review->id = $faker->uuid;
-    $review->reviewer = $faker->name;
-    $review->bookId = $faker->uuid;
-    $review->bookTitle = substr($faker->sentence(5), 0, -1);
-    $review->review = $faker->text;
-    $review->date = $faker->date();
+    $review->fromGenerator($faker);
 
     $response->writeJson($review);
     $next();
