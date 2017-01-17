@@ -12,6 +12,8 @@ require '../vendor/autoload.php';
 $server = new Server("BookService", "0.1");
 $faker = Faker\Factory::create();
 
+$fakeDelay = $argc > 1 && $argv[1] === '--fake-delay';
+
 /**
  * @SWG\Swagger(
  *     schemes={"http"},
@@ -47,8 +49,10 @@ $faker = Faker\Factory::create();
  *     ),
  * )
  */
-$server->get('/book/last', function (Request $request, Response $response, $next) use ($faker) {
-    usleep(rand(0, 200 * 1000));
+$server->get('/book/last', function (Request $request, Response $response, $next) use ($faker, $fakeDelay) {
+    if ($fakeDelay) {
+        usleep(random_int(0, 200 * 1000));
+    }
 
     $book = new Book();
     $book->fromGenerator($faker);
@@ -71,8 +75,10 @@ $server->get('/book/last', function (Request $request, Response $response, $next
  *     ),
  * )
  */
-$server->get('/review/last', function (Request $request, Response $response, $next) use ($faker) {
-    usleep(rand(0, 200 * 1000));
+$server->get('/review/last', function (Request $request, Response $response, $next) use ($faker, $fakeDelay) {
+    if ($fakeDelay) {
+        usleep(random_int(0, 200 * 1000));
+    }
 
     $review = new Review();
     $review->fromGenerator($faker);

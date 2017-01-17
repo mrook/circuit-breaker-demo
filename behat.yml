@@ -1,0 +1,17 @@
+default:
+  autoload:
+    '': features/Context
+  formatters:
+    pretty: true
+    progress: false
+  suites:
+    demo:
+      paths:
+        features: features
+      contexts: [FeatureContext]
+  extensions:
+    Behat\MinkExtension:
+      base_url: 'http://localhost:8080'
+      sessions:
+        default:
+          goutte: ~
