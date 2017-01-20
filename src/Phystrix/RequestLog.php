@@ -20,7 +20,7 @@ class RequestLog extends \Odesk\Phystrix\RequestLog
                 foreach ($events as $event) {
                     $display .= "{$event}, ";
                 }
-                $display = substr($display, 0, strlen($display) - 2);
+                $display = substr($display, 0, -2);
             } else {
                 $display .= "Executed";
             }
