@@ -39,7 +39,7 @@ abstract class CommandTest extends TestCase
      */
     protected $commandClass = null;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->client = $this->getMockBuilder(Client::class)
             ->getMock();
